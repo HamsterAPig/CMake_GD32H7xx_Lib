@@ -1,7 +1,7 @@
 if (NOT MCU_SERIES)
     message(FATAL_ERROR "MCU_SERIES must be specified!")
 endif ()
-message(AUTHOR_WARNING "MCU_SERIES is "${MCU_SERIES})
+message("MCU_SERIES is ${MCU_SERIES}")
 
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR arm)
@@ -43,24 +43,34 @@ else ()
 endif ()
 
 if (MCU_SERIES STREQUAL "GD32H7XX")
-    # MCU specific flags
-    set(TARGET_FLAGS "-mcpu=cortex-m7")
-    set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -T \"${CMAKE_SOURCE_DIR}/ldscripts/gd32h7xx_flash.ld\"")
-    #add_compile_definitions(ARM_MATH_CM4;ARM_MATH_MATRIX_CHECK;ARM_MATH_ROUNDING)
-    #add_compile_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
-    #add_link_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
-    add_compile_options(-mfloat-abi=soft)
+    set(HARD_FLOAT_PARAM -mfloat-abi=hard -mfpu=fpv4-sp-d16)
+    set(SOFT_FLOAT_PARAM -mfloat-abi=soft)
+    set(PROCESSOR_PLATFORM -mcpu=cortex-m7 -mthumb -mthumb-interwork)
+    set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/CMake_GD32_Firmware/ldscripts/gd32h7xx_flash.ld)
 endif ()
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TARGET_FLAGS} -Wall -Wextra -Wpedantic -fdata-sections -ffunction-sections")
-set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -x assembler-with-cpp -MMD -MP")
-# disable rtti/exceptions/threadsafe-statics cpp feature
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fno-rtti -fno-exceptions -fno-threadsafe-statics")
+if (ENABLE_HARD_FLOAT)
+    add_compile_options(${HARD_FLOAT_PARAM})
+    add_link_options(${HARD_FLOAT_PARAM})
+    message("Using hard float")
+else ()
+    add_compile_options(${SOFT_FLOAT_PARAM})
+    message("Using soft float")
+endif ()
 
-set(CMAKE_C_LINK_FLAGS "${TARGET_FLAGS}")
-set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} --specs=nano.specs")
-set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,-Map=${CMAKE_PROJECT_NAME}.map -Wl,--gc-sections")
-set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,--start-group -lc -lm -Wl,--end-group")
-set(CMAKE_C_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,--print-memory-usage")
+add_compile_options(${PROCESSOR_PLATFORM})
+add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0 -fsigned-char)
+add_compile_options(-specs=nano.specs -specs=nosys.specs)
+add_compile_options(
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-threadsafe-statics>
+)
+# Enable assembler files preprocessing
+add_compile_options($<$<COMPILE_LANGUAGE:ASM>:-x$<SEMICOLON>assembler-with-cpp>)
 
-set(CMAKE_CXX_LINK_FLAGS "${CMAKE_C_LINK_FLAGS} -Wl,--start-group -lstdc++ -lsupc++ -Wl,--end-group")
+add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.map)
+add_link_options(-Wl,--start-group -lc -lm -Wl,--end-group)
+add_link_options(-specs=nano.specs -specs=nano.specs)
+add_link_options(${PROCESSOR_PLATFORM})
+add_link_options(-T ${LINKER_SCRIPT})
