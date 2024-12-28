@@ -65,9 +65,12 @@ add_compile_options(
         $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
         $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
         $<$<COMPILE_LANGUAGE:CXX>:-fno-threadsafe-statics>
+
+        $<$<COMPILE_LANGUAGE:ASM>:-MMD>
+        $<$<COMPILE_LANGUAGE:ASM>:-MP>
+        # Enable assembler files preprocessing
+        $<$<COMPILE_LANGUAGE:ASM>:-x$<SEMICOLON>assembler-with-cpp>
 )
-# Enable assembler files preprocessing
-add_compile_options($<$<COMPILE_LANGUAGE:ASM>:-x$<SEMICOLON>assembler-with-cpp>)
 
 add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.map)
 add_link_options(-Wl,--start-group -lc -lm -Wl,--end-group)
