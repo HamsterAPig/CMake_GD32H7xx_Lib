@@ -103,9 +103,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 
 ## 编译选项
 在使用的时候需要使用`cmakd -D`选项将MCU系列传递进去，默认是`GD32H7xx`，以下是一些选项说明
-1. MCU_SERIES: MCU类型，e.g, GD32H7xx
-2. ENABLE_HARD_FLOAT: 启用硬件浮点
-3. ENABLE_PRINTF: 启用第三方的printf实现，具体见 https://github.com/HamsterAPig/printf 
+1. `MCU_SERIES`: MCU类型，e.g, GD32H7xx
+2. `ENABLE_HARD_FLOAT`: 启用硬件浮点
+3. `ENABLE_PRINTF`: 启用第三方的printf实现，具体见 https://github.com/HamsterAPig/printf 
 
 # 支持计划
 目前仅支持GD32H7系列的库
