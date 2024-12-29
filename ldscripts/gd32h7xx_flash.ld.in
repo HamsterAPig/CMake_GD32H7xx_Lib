@@ -1,3 +1,7 @@
+_estack = ORIGIN(RAM) + LENGTH(RAM);    /* end of RAM */
+_Min_Heap_Size = @MIN_HEAP_SIZE@;
+_Min_Stack_Size = @MIN_STACK_SIZE@;
+
 /* memory map */
 MEMORY
 {
@@ -9,7 +13,6 @@ ENTRY(Reset_Handler)
 
 SECTIONS
 {
-  __stack_size = DEFINED(__stack_size) ? __stack_size : 2K;
   
 /* ISR vectors */
   .vectors :
@@ -115,12 +118,17 @@ SECTIONS
   PROVIDE ( end = _ebss );
   PROVIDE ( _end = _ebss );
 
-  .stack ORIGIN(RAM) + LENGTH(RAM) - __stack_size :
+  /* User_heap_stack section, used to check that there is enough RAM left */
+  ._user_heap_stack :
   {
-    PROVIDE( _heap_end = . ); 
-    . = __stack_size;  
-    PROVIDE( _sp = . ); 
-  } >RAM AT>RAM
+    . = ALIGN(8);                 /* 对齐到8字节边界 */
+    PROVIDE ( end = . );          /* 定义end符号为当前地址 */
+    PROVIDE ( _end = . );         /* 定义_end符号为当前地址 */
+    . = . + _Min_Heap_Size;       /* 加上堆的大小 */
+    . = . + _Min_Stack_Size;      /* 加上栈的大小 */
+    PROVIDE ( _sp = . );          /* 定义_sp为当前地址，即栈的起始地址 */
+    . = ALIGN(8);                 /* 对齐到8字节边界 */
+  } >RAM
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

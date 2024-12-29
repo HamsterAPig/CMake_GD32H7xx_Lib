@@ -43,13 +43,19 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
+# configure mcu
 if (MCU_SERIES STREQUAL "GD32H7XX")
     set(HARD_FLOAT_PARAM -mfloat-abi=hard -mfpu=fpv4-sp-d16)
     set(SOFT_FLOAT_PARAM -mfloat-abi=soft)
     set(PROCESSOR_PLATFORM -mcpu=cortex-m7 -mthumb -mthumb-interwork)
-    set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/${LIB_DIR_PREFIX}/ldscripts/gd32h7xx_flash.ld)
+    set(LINK_FILE_NAME gd32h7xx_flash.ld)
 endif ()
 
+# generate link script file
+configure_file(${CMAKE_SOURCE_DIR}/${LIB_DIR_PREFIX}/ldscripts/${LINK_FILE_NAME}.in ${LINK_FILE_NAME} @ONLY)
+set(LINKER_SCRIPT ${CMAKE_BINARY_DIR}/${LINK_FILE_NAME})
+
+# float support
 if (ENABLE_HARD_FLOAT)
     add_compile_options(${HARD_FLOAT_PARAM})
     add_link_options(${HARD_FLOAT_PARAM})

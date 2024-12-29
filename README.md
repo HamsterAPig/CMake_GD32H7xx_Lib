@@ -39,6 +39,8 @@ endif()
 
 # Define MCU Series
 set(MCU_SERIES "GD32H7XX" CACHE STRING "Select the MCU Series (e.g, GD32H7xx)")
+set(MIN_HEAP_SIZE 0x200 CACHE STRING "Minimum heap size in bytes" FORCE)
+set(MIN_STACK_SIZE 0x400 CACHE STRING "Minimum stack size in bytes" FORCE)
 option(ENABLE_HARD_FLOAT "Enable the hard float support" ON)
 option(ENABLE_PRINTF "Enable printf support" ON)
 
@@ -106,6 +108,9 @@ target_link_libraries(${CMAKE_PROJECT_NAME}
 1. `MCU_SERIES`: MCU类型，e.g, GD32H7xx
 2. `ENABLE_HARD_FLOAT`: 启用硬件浮点
 3. `ENABLE_PRINTF`: 启用第三方的printf实现，具体见 https://github.com/HamsterAPig/printf 
+4. `MIN_HEAP_SIZE `: 最小堆空间
+5. `MIN_STACK_SIZE `: 最小栈空间
+> 注意： 修改了最小堆栈空间大小的话，需要重新加载以下CMake工程，因为链接脚本是CMake动态生成的，实际的构建脚本在构建输出目录下
 
 # 支持计划
 目前仅支持GD32H7系列的库
