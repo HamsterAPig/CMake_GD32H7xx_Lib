@@ -121,7 +121,12 @@ SECTIONS
     . = __stack_size;  
     PROVIDE( _sp = . ); 
   } >RAM AT>RAM
-}
 
- /* input sections */
-GROUP(libgcc.a libc.a libm.a libnosys.a)
+  /* Remove information from the standard libraries */
+  /DISCARD/ :
+  {
+    libc.a ( * )
+    libm.a ( * )
+    libgcc.a ( * )
+  }
+}
