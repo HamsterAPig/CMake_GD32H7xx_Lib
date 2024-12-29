@@ -60,7 +60,7 @@ endif ()
 
 add_compile_options(${PROCESSOR_PLATFORM})
 add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0 -fsigned-char)
-add_compile_options(-specs=nano.specs -specs=nosys.specs)
+add_compile_options(-specs=nano.specs)
 add_compile_options(
         $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
         $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
@@ -74,6 +74,6 @@ add_compile_options(
 
 add_link_options(-Wl,-gc-sections,--print-memory-usage,-Map=${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.map)
 add_link_options(-Wl,--start-group -lc -lm -Wl,--end-group)
-add_link_options(-specs=nano.specs -specs=nano.specs)
+add_link_options(-specs=nano.specs)
 add_link_options(${PROCESSOR_PLATFORM})
 add_link_options(-T ${LINKER_SCRIPT})
