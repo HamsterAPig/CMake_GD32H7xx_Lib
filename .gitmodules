@@ -1,0 +1,3 @@
+[submodule "3rdparty/printf"]
+	path = 3rdparty/printf
+	url = git@github.com:HamsterAPig/printf.git
