@@ -23,7 +23,7 @@ SECTIONS
     . = ALIGN(4);
     __Vectors_End = .;
     __Vectors_Size = __Vectors_End - __gVectors;
-  } >FLASH
+  } >TCM
 
   .text :
   {
@@ -40,7 +40,7 @@ SECTIONS
     . = ALIGN(4);
     /* the symbol ‘_etext’ will be defined at the end of code section */
     _etext = .;
-  } >FLASH
+  } >TCM
 
   .rodata :
   {
@@ -48,27 +48,27 @@ SECTIONS
     *(.rodata)
     *(.rodata*)
     . = ALIGN(4);
-  } >FLASH
+  } >TCM
 
    .ARM.extab :
   { 
      *(.ARM.extab* .gnu.linkonce.armextab.*) 
-  } >FLASH
+  } >TCM
   
     .ARM : {
     __exidx_start = .;
     *(.ARM.exidx*)
     __exidx_end = .;
-    } >FLASH
+    } >TCM
 
-  .ARM.attributes : { *(.ARM.attributes) } > FLASH
+  .ARM.attributes : { *(.ARM.attributes) } > TCM
 
   .preinit_array :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
     PROVIDE_HIDDEN (__preinit_array_end = .);
-  } >FLASH
+  } >TCM
   
   .init_array :
   {
@@ -76,7 +76,7 @@ SECTIONS
     KEEP (*(SORT(.init_array.*)))
     KEEP (*(.init_array*))
     PROVIDE_HIDDEN (__init_array_end = .);
-  } >FLASH
+  } >TCM
   
   .fini_array :
   {
@@ -84,7 +84,7 @@ SECTIONS
     KEEP (*(.fini_array*))
     KEEP (*(SORT(.fini_array.*)))
     PROVIDE_HIDDEN (__fini_array_end = .);
-  } >FLASH
+  } >TCM
 
   /* provide some necessary symbols for startup file to initialize data */
   _sidata = LOADADDR(.data);
@@ -98,7 +98,7 @@ SECTIONS
     . = ALIGN(4);
     /* the symbol ‘_edata’ will be defined at the data section end */
     _edata = .;
-  } >RAM AT> FLASH
+  } >TCM
 
   . = ALIGN(4);
   .bss :
@@ -113,7 +113,7 @@ SECTIONS
     /* the symbol ‘_ebss’ will be defined at the bss section end */
     _ebss = .;
     __bss_end__ = _ebss;
-  } >RAM
+  } >TCM
 
  . = ALIGN(8);
   PROVIDE ( end = _ebss );
@@ -129,7 +129,7 @@ SECTIONS
     . = . + _Min_Stack_Size;      /* 加上栈的大小 */
     PROVIDE ( _sp = . );          /* 定义_sp为当前地址，即栈的起始地址 */
     . = ALIGN(8);                 /* 对齐到8字节边界 */
-  } >RAM
+  } >TCM
 
   /* Remove information from the standard libraries */
   /DISCARD/ :

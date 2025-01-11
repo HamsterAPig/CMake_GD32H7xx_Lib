@@ -4,6 +4,7 @@ if (NOT MCU_SERIES STREQUAL "GD32H7XX")
 endif ()
 project(gd32h7xx)
 add_library(${PROJECT_NAME} INTERFACE)
+set(LIB_DIR_PREFIX CMake_GD32_Firmware)
 
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
@@ -79,6 +80,29 @@ target_link_libraries(${PROJECT_NAME} INTERFACE
 )
 
 target_compile_definitions(${PROJECT_NAME} INTERFACE GD32H7XX)
+
+target_compile_options(${PROJECT_NAME} INTERFACE
+        -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16
+)
+
+if (RUN_IN_RAM)
+    set(LINK_FILE_NAME gd32h7xx_ram.ld)
+    message(STATUS "Using RAM linkscript")
+else ()
+    set(LINK_FILE_NAME gd32h7xx_flash.ld)
+    message(STATUS "Using Flash linkscript")
+endif ()
+
+configure_file(
+        "${CMAKE_SOURCE_DIR}/${LIB_DIR_PREFIX}/ldscripts/${LINK_FILE_NAME}.in"
+        "${CMAKE_BINARY_DIR}/${LINK_FILE_NAME}"
+        @ONLY
+)
+
+target_link_options(${PROJECT_NAME} INTERFACE
+        -mcpu=cortex-m7 -mthumb -mfloat-abi=hard -mfpu=fpv5-sp-d16
+        -T ${CMAKE_BINARY_DIR}/${LINK_FILE_NAME}
+)
 
 # Validate that code is compatible with C standard
 if(CMAKE_C_STANDARD LESS 11)

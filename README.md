@@ -41,8 +41,8 @@ endif()
 set(MCU_SERIES "GD32H7XX" CACHE STRING "Select the MCU Series (e.g, GD32H7xx)")
 set(MIN_HEAP_SIZE 0x200 CACHE STRING "Minimum heap size in bytes" FORCE)
 set(MIN_STACK_SIZE 0x400 CACHE STRING "Minimum stack size in bytes" FORCE)
-option(ENABLE_HARD_FLOAT "Enable the hard float support" ON)
 option(ENABLE_PRINTF "Enable printf support" ON)
+option(RUN_IN_RAM "Program running in ram" OFF)
 
 # Set the project name
 set(CMAKE_PROJECT_NAME CMake_GD32_Firmware)
